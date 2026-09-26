@@ -20,7 +20,7 @@ ConnectDB()
 
 app.use('/api',Routes)
 
-// app.listen(PORT,()=>{
-//     console.log(`Server Running on port ${PORT}`)
-// })
-export default app
+app.listen(PORT,()=>{
+    console.log(`Server Running on port ${PORT}`)
+})
+// export default app
