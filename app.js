@@ -9,12 +9,15 @@ dotenv.config()
 // dns.setServers(['1.1.1.1','8.8.8.8','0.0.0.0'])
 
 const app = express()
-const PORT = 3000
+const PORT = process.env.PORT || 3000
 
 
 app.use(express.json())
 
-app.use(cors())
+app.use(cors({
+    origin: process.env.FRONTEND_URL || "*",
+    credentials: true
+}));
 
 ConnectDB()
 
