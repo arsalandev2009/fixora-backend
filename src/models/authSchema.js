@@ -32,9 +32,6 @@ export const UserComplaint = mongoose.model('UserComplaint',new mongoose.Schema(
         unique:true,
         required:true,
     },
-    applianceImage:{
-        type:String,
-    },
     appliance:{
         type:String,
         required:true

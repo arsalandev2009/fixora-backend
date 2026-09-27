@@ -1,9 +1,40 @@
 import { User, UserComplaint } from "../models/authSchema.js";
 import bcrypt from "bcryptjs";
 import jwt from 'jsonwebtoken'
+import dotenv from 'dotenv'
 
+import Stripe from "stripe";
+dotenv.config()
 
+const stripe = new Stripe(process.env.STRIPE_SECRET_KEY)
+export const StripePaymentPage =async (req,res)=>{
+try { 
+  // const {amount } = req.body;
+  const session =  await stripe.checkout.sessions.create({
+    // payment_method_types:["card"],
+    mode:'payment',
 
+    line_items:[
+      {
+        price_data:{
+          currency:'pkr',
+          product_data:{
+            name:'fixora Payment'
+          },
+          unit_amount:100000
+        },
+        quantity:1,
+      },
+    ],
+    success_url:`${process.env.PORT}/payment-success`,
+    cancel_url:`${process.env.PORT}/payment-cancel`,
+  })
+  res.status(200).json({url:session.url})
+  
+} catch (error) {
+  res.status(500).json({message:error,success:false})
+}
+}
 
 export const Login = async (req, res) => {
 try {
@@ -57,7 +88,8 @@ export const Signup = async (req, res) => {
 export const Complain = async(req,res)=>{
 const complainID = `FX_${Math.floor(1000 + Math.random() * 9000)}`
 try {
-  const {applianceImage,appliance,problem,serviceType,serviceAddress,additionalInformation}=req.body
+  const {appliance,problem,serviceType,serviceAddress,additionalInformation}= req.body
+   const {payment} = req.body
 
   if(!appliance || !problem || !serviceType || !serviceAddress ){
     res.status(400).json({message:'all fields required',success:false})
@@ -67,7 +99,6 @@ try {
     UserComplaint.create({
       userId: req.user.userId,
       complainID,
-      applianceImage,
       appliance,
       problem,
       serviceType,
@@ -76,7 +107,21 @@ try {
     })
       res.status(200).json({message:'Complaint Generated Sucessfully',success:true})
   }else if(serviceType.toLowerCase() === 'fast'){
-    res.status(400).json({message:'payment karo'})
+    if(payment === 'done'){
+      UserComplaint.create({
+        userId:req.user.userId,
+        complainID,
+        appliance,
+        problem,
+        serviceType,
+        serviceAddress,
+        additionalInformation
+      })
+      res.status(200).json({message:'Complaint Generated Sucessfully',success:true})
+      return
+    }
+    res.json({message:'plz pay first'})
+
   }
 } catch (error) {
   console.log('Data Adding error' + error)
