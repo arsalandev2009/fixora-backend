@@ -26,8 +26,8 @@ try {
         quantity:1,
       },
     ],
-    success_url:`${process.env.FRONTEN_URL}/payment-success`,
-    cancel_url:`${process.env.FRONTEN_URL}/payment-cancel`,
+    success_url:`${process.env.FRONTEND_URL}/payment-success`,
+    cancel_url:`${process.env.FRONTEND_URL}/payment-cancel`,
   })
   res.status(200).json({url:session.url})
   

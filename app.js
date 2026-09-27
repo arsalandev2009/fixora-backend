@@ -5,8 +5,8 @@ import { ConnectDB } from "./src/db/ConnectDB.js";
 import { Routes } from "./src/routes/Routes.js";
 
 dotenv.config()
-// import dns from 'dns'
-// dns.setServers(['1.1.1.1','8.8.8.8','0.0.0.0'])
+import dns from 'dns'
+dns.setServers(['1.1.1.1','8.8.8.8','0.0.0.0'])
 
 const app = express()
 const PORT = process.env.PORT || 3000
